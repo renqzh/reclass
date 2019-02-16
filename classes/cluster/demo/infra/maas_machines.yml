@@ -1,0 +1,7 @@
+
+parameters:
+  maas:
+    region:
+      machines:
+        <<LOAD_FROM_FILE>>
+# TODO: add some default-examples?

@@ -1,0 +1,11 @@
+classes:
+- system.linux.system.repo.mcp.apt_mirantis.ubuntu
+- system.linux.system.repo.mcp.apt_mirantis.update
+#- system.linux.system.repo.mcp.apt_mirantis.hotfix
+- system.linux.system.repo.mcp.apt_mirantis.saltstack
+- system.linux.system.repo.mcp.apt_mirantis.extra
+- system.linux.system.repo.mcp.apt_mirantis.percona
+
+# PROD-24058 Updates disabled by default, for openstack deployments
+#- system.linux.system.repo_local.mcp.updates
+

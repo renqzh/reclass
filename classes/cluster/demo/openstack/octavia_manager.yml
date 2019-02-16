@@ -1,0 +1,8 @@
+classes:
+- system.octavia.manager.single
+- system.salt.minion.ca.octavia_ca
+- system.salt.minion.cert.octavia.amphora_client
+
+parameters:
+  _param:
+    octavia_private_key: ${_param:octavia_private_key_generated}

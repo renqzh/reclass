@@ -1,0 +1,161 @@
+classes:
+- system.linux.system.repo.mcp.extra
+- system.linux.system.repo.mcp.apt_mirantis.openstack
+- system.linux.system.repo.mcp.apt_mirantis.ubuntu
+- system.linux.system.repo.mcp.apt_mirantis.saltstack_2016_3
+- system.linux.system.repo.mcp.apt_mirantis.glusterfs
+- system.glusterfs.client.cluster
+- system.glusterfs.client.volume.salt_pki
+- system.nginx.server.single
+- system.nginx.server.stream.gerrit_ssh
+- system.nginx.server.proxy.cicd.gerrit
+- system.nginx.server.proxy.cicd.jenkins
+- system.nginx.server.proxy.openstack_api
+- system.nginx.server.proxy.openstack_vnc
+- system.nginx.server.proxy.openstack_web
+- system.nginx.server.proxy.openstack.ironic
+- system.nginx.server.proxy.ceph_radosgw
+- system.nginx.server.proxy.openstack.ceilometer
+- system.horizon.server.single
+- system.horizon.server.plugin.heat
+- system.salt.minion.cert.proxy.openstack
+- system.salt.minion.cert.proxy.pki
+- system.sphinx.server.doc.reclass
+- service.keepalived.cluster.single
+- cluster.demo.openstack.dashboard
+- cluster.demo.openstack.networking.virtual
+- cluster.demo.infra
+parameters:
+  _param:
+    keepalived_vip_interface: ens3
+    keepalived_vip_virtual_router_id: 240
+    nginx_proxy_openstack_glance_image_size: 30000m
+    ironic_service_host: ${_param:openstack_control_address}
+    nginx_proxy_ssl:
+      enabled: true
+      authority: ${_param:salt_minion_ca_authority}
+      engine: salt
+      mode: manual
+      key_file:  /srv/salt/pki/${_param:cluster_name}/${salt:minion:cert:proxy:common_name}.key
+      cert_file: /srv/salt/pki/${_param:cluster_name}/${salt:minion:cert:proxy:common_name}.crt
+      chain_file: /srv/salt/pki/${_param:cluster_name}/${salt:minion:cert:proxy:common_name}-with-chain.crt
+      protocols:
+        TLSv1:
+          enabled: true
+          name: TLSv1
+        TLSv1_1:
+          enabled: true
+          name: TLSv1.1
+        TLSv1_2:
+          enabled: true
+          name: TLSv1.2
+      ciphers:
+        DSS:
+          enabled: true
+          name: '!DSS'
+        AES128_GCM_SHA256:
+          enabled: true
+          name: AES128-GCM-SHA256
+        AES128_SHA:
+          enabled: true
+          name: AES128-SHA
+        AES128_SHA256:
+          enabled: true
+          name: AES128-SHA256
+        AES256_GCM_SHA384:
+          enabled: true
+          name: AES256-GCM-SHA384
+        AES256_SHA:
+          enabled: true
+          name: AES256-SHA
+        AES256_SHA256:
+          enabled: true
+          name: AES256-SHA256
+        DES_CBC3_SHA:
+          enabled: true
+          name: DES-CBC3-SHA
+        DHE_RSA_AES128_GCM_SHA256:
+          enabled: true
+          name: DHE-RSA-AES128-GCM-SHA256
+        DHE_RSA_AES128_SHA:
+          enabled: true
+          name: DHE-RSA-AES128-SHA
+        DHE_RSA_AES128_SHA256:
+          enabled: true
+          name: DHE-RSA-AES128-SHA256
+        DHE_RSA_AES256_GCM_SHA384:
+          enabled: true
+          name: DHE-RSA-AES256-GCM-SHA384
+        DHE_RSA_AES256_SHA:
+          enabled: true
+          name: DHE-RSA-AES256-SHA
+        DHE_RSA_AES256_SHA256:
+          enabled: true
+          name: DHE-RSA-AES256-SHA256
+        ECDHE_ECDSA_AES128_GCM_SHA256:
+          enabled: true
+          name: ECDHE-ECDSA-AES128-GCM-SHA256
+        ECDHE_ECDSA_AES128_SHA:
+          enabled: true
+          name: ECDHE-ECDSA-AES128-SHA
+        ECDHE_ECDSA_AES128_SHA256:
+          enabled: true
+          name: ECDHE-ECDSA-AES128-SHA256
+        ECDHE_ECDSA_AES256_GCM_SHA384:
+          enabled: true
+          name: ECDHE-ECDSA-AES256-GCM-SHA384
+        ECDHE_ECDSA_AES256_SHA:
+          enabled: true
+          name: ECDHE-ECDSA-AES256-SHA
+        ECDHE_ECDSA_AES256_SHA384:
+          enabled: true
+          name: ECDHE-ECDSA-AES256-SHA384
+        ECDHE_ECDSA_CHACHA20_POLY1305:
+          enabled: true
+          name: ECDHE-ECDSA-CHACHA20-POLY1305
+        ECDHE_ECDSA_DES_CBC3_SHA:
+          enabled: true
+          name: ECDHE-ECDSA-DES-CBC3-SHA
+        ECDHE_RSA_AES128_GCM_SHA256:
+          enabled: true
+          name: ECDHE-RSA-AES128-GCM-SHA256
+        ECDHE_RSA_AES128_SHA:
+          enabled: true
+          name: ECDHE-RSA-AES128-SHA
+        ECDHE_RSA_AES128_SHA256:
+          enabled: true
+          name: ECDHE-RSA-AES128-SHA256
+        ECDHE_RSA_AES256_GCM_SHA384:
+          enabled: true
+          name: ECDHE-RSA-AES256-GCM-SHA384
+        ECDHE_RSA_AES256_SHA:
+          enabled: true
+          name: ECDHE-RSA-AES256-SHA
+        ECDHE_RSA_AES256_SHA384:
+          enabled: true
+          name: ECDHE-RSA-AES256-SHA384
+        ECDHE_RSA_CHACHA20_POLY1305:
+          enabled: true
+          name: ECDHE-RSA-CHACHA20-POLY1305
+        ECDHE_RSA_DES_CBC3_SHA:
+          enabled: true
+          name: ECDHE-RSA-DES-CBC3-SHA
+        EDH_RSA_DES_CBC3_SHA:
+          enabled: true
+          name: EDH-RSA-DES-CBC3-SHA
+      ecdh_curve:
+        secp521r1:
+          enabled: true
+          name: secp521r1
+      prefer_server_ciphers: 'on'
+      dhparam:
+        enabled: true
+      stapling: 'off'
+      stapling_verify: 'off'
+    cluster_vip_address: ${_param:openstack_proxy_address}
+  # wait for Gluster /srv/salt/pki mount before starting
+  nginx:
+    server:
+      wait_for_service:
+        - srv-salt-pki.mount
+

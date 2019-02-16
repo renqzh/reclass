@@ -1,0 +1,99 @@
+classes:
+- system.linux.system.repo.mcp.apt_mirantis.ubuntu
+- system.linux.system.repo.mcp.apt_mirantis.saltstack_2016_3
+- system.linux.system.repo.mcp.apt_mirantis.openstack
+- system.linux.system.repo.mcp.extra
+- system.nova.compute.cluster
+- system.nova.compute.notification.messagingv2
+- system.nova.compute.libvirt.ssl
+- system.prometheus.exporters.libvirt
+- system.neutron.compute.cluster
+- system.nova.compute.storage.ceph
+- system.ceph.common.cluster
+- system.linux.network.dynamic_hosts
+- cluster.demo.infra
+- cluster.demo.openstack.networking.compute
+parameters:
+  _param:
+    cluster_vip_address: ${_param:openstack_control_address}
+    cluster_local_address: ${_param:single_address}
+    cluster_node01_hostname: ${_param:openstack_control_node01_hostname}
+    cluster_node01_address: ${_param:openstack_control_node01_address}
+    cluster_node02_hostname: ${_param:openstack_control_node02_hostname}
+    cluster_node02_address: ${_param:openstack_control_node02_address}
+    cluster_node03_hostname: ${_param:openstack_control_node03_hostname}
+    cluster_node03_address: ${_param:openstack_control_node03_address}
+    nova_vncproxy_url: https://${_param:cluster_public_host}:6080
+    control_network_nic: ten2
+    frontend_network_nic: ten3
+    tenant_network_nic: ten4
+    public_network_nic: ens161
+    vlan_network_nic: ens193
+    nova_compute_virtualization: qemu
+  neutron:
+    compute:
+      dhcp_agent_enabled: true
+  #nova:
+  #  compute:
+  #    virtualization: kvm
+
+  linux:
+    network:
+      bridge: openvswitch
+      interface:
+        ten1: ${_param:linux_deploy_interface}
+        ten2:
+          mtu: 1500
+          enabled: true
+          type: eth
+          proto: static
+          address: ${_param:single_address}
+          netmask: ${_param:control_network_netmask}
+          name: ${_param:control_network_nic}
+        ten3:
+          mtu: 1500
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:frontend_network_nic}
+        ten4:
+          mtu: 1500
+          enabled: true
+          type: eth
+          proto: static
+          address: ${_param:tenant_address}
+          netmask: ${_param:tenant_network_netmask}
+          name: ${_param:tenant_network_nic}
+        ten5:
+          mtu: 1500
+          enabled: true
+          type: eth
+          proto: manual
+          ovs_bridge: br-floating
+          ovs_type: OVSPort
+          name: ${_param:public_network_nic}
+        ten6:
+          mtu: 1500
+          enabled: true
+          type: eth
+          proto: manual
+          ovs_bridge: br-prv
+          ovs_type: OVSPort
+          name: ${_param:vlan_network_nic}
+        br-prv:
+          enabled: true
+          type: ovs_bridge
+        br_storge:
+          enabled: true
+          type: bridge
+          proto: static
+          address: ${_param:frontend_address}
+          netmask: ${_param:frontend_network_netmask}
+          use_interfaces:
+          - ${_param:frontend_network_nic}
+        br-floating:
+          enabled: true
+          type: ovs_bridge
+
+
+

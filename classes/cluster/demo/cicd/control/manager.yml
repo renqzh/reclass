@@ -1,0 +1,4 @@
+classes:
+  - system.docker.swarm.manager
+  - cluster.demo.cicd.control
+

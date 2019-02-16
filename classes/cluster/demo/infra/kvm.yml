@@ -1,0 +1,345 @@
+
+classes:
+- system.linux.system.repo.mcp.extra
+- system.linux.system.repo.mcp.apt_mirantis.openstack
+- system.linux.system.repo.mcp.apt_mirantis.ubuntu
+- system.linux.system.repo.mcp.apt_mirantis.glusterfs
+- system.linux.system.repo.mcp.apt_mirantis.saltstack_2016_3
+- system.salt.control.virt
+- system.salt.control.cluster
+- system.salt.control.cluster.openstack_control_cluster
+- system.salt.control.cluster.openstack_proxy_cluster
+- system.salt.control.cluster.openstack_database_cluster
+- system.salt.control.cluster.openstack_message_queue_cluster
+- system.salt.control.cluster.openstack_baremetal_cluster
+#- system.salt.control.cluster.openstack_upgrade_single
+- system.salt.control.sizes.openstack.medium
+- system.salt.control.placement.openstack.medium
+- system.salt.control.cluster.openstack_benchmark_single
+- system.salt.control.cluster.stacklight_server_cluster
+- system.salt.control.cluster.stacklight_log_cluster
+- system.salt.control.cluster.stacklight_telemetry_cluster
+- system.salt.control.sizes.stacklight.medium
+- system.salt.control.placement.stacklight.medium
+- system.salt.control.cluster.cicd_control_cluster
+- system.salt.control.sizes.cicd.medium
+- system.salt.control.placement.cicd.medium
+- system.salt.control.cluster.ceph_mon_cluster
+- system.salt.control.cluster.ceph_rgw_cluster
+- system.salt.control.sizes.ceph
+- cluster.demo.infra
+- cluster.demo.infra.networking.kvm
+parameters:
+  _param:
+    cluster_vip_address: ${_param:infra_kvm_address}
+    cluster_node01_address: ${_param:infra_kvm_node01_address}
+    cluster_node02_address: ${_param:infra_kvm_node02_address}
+    cluster_node03_address: ${_param:infra_kvm_node03_address}
+    keepalived_vip_interface: br_ctl
+    keepalived_vip_virtual_router_id: 69
+    deploy_nic: ten1
+    control_nic: ten3
+    storage_nic: ten4
+    tenant_nic: ten5
+    public_nic: ten2
+  salt:
+    control:
+      size: #RAM 4096,8192,16384,32768,65536
+      ##Default production sizing
+        openstack.bmk:
+          cpu: 1
+          ram: 2048
+          disk_profile: small
+          net_profile: default
+        openstack.control:
+          cpu: 2
+          ram: 8192
+          disk_profile: small
+          net_profile: control
+        openstack.database:
+          cpu: 1
+          ram: 8192
+          disk_profile: small
+          net_profile: default
+        openstack.message_queue:
+          cpu: 1
+          ram: 4096
+          disk_profile: small
+          net_profile: default
+        openstack.gateway:
+          cpu: 1
+          ram: 2048
+          disk_profile: small
+          net_profile: gateway
+        openstack.proxy:
+          cpu: 1
+          ram: 2048
+          disk_profile: small
+          net_profile: proxy
+        cicd.control:
+          cpu: 2
+          ram: 4096
+          disk_profile: small
+          net_profile: default
+        ceph.mon:
+          cpu: 1
+          ram: 4096
+          disk_profile: large
+          net_profile: ceph
+        ceph.rgw:
+          cpu: 1
+          ram: 4096
+          disk_profile: small
+          net_profile: ceph
+        kubernetes.control:
+          cpu: 1
+          ram: 4096
+          disk_profile: small
+          net_profile: k8s-ctl
+        kubernetes.compute:
+          cpu: 2
+          ram: 8192
+          disk_profile: large
+          net_profile: k8s-cmp
+        #stacklight.mon:
+        #  cpu: 1
+        #  ram: 4096
+        #  disk_profile: xxxlarge
+        #  net_profile: ceph
+        #stacklight.mtr:
+        #  cpu: 1
+        #  ram: 4096
+        #  disk_profile: xxxlarge
+        #  net_profile: default
+        #stacklight.log:
+        #  cpu: 1
+        #  ram: 4096
+        #  disk_profile: xxxlarge
+        #  net_profile: ceph
+      cluster:
+        internal:
+          node:
+
+            ctl01:
+              name: ${_param:openstack_control_node01_hostname}
+              provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.control
+            ctl02:
+              name: ${_param:openstack_control_node02_hostname}
+              provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.control
+            ctl03:
+              name: ${_param:openstack_control_node03_hostname}
+              provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.control
+            dbs01:
+              name: ${_param:openstack_database_node01_hostname}
+              provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.database
+            dbs02:
+              name: ${_param:openstack_database_node02_hostname}
+              provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.database
+            dbs03:
+              name: ${_param:openstack_database_node03_hostname}
+              provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.database
+            msg01:
+              name: ${_param:openstack_message_queue_node01_hostname}
+              provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.message_queue
+            msg02:
+              name: ${_param:openstack_message_queue_node02_hostname}
+              provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.message_queue
+            msg03:
+              name: ${_param:openstack_message_queue_node03_hostname}
+              provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.message_queue
+            prx01:
+              name: ${_param:openstack_proxy_node01_hostname}
+              provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.proxy
+            prx02:
+              name: ${_param:openstack_proxy_node02_hostname}
+              provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.proxy
+            gtw01:
+              name: ${_param:openstack_gateway_node01_hostname}
+              provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.gateway
+            gtw02:
+              name: ${_param:openstack_gateway_node02_hostname}
+              provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.gateway
+            gtw03:
+              name: ${_param:openstack_gateway_node03_hostname}
+              provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+              image: ${_param:salt_control_xenial_image}
+              size: openstack.gateway
+
+
+           # mon01:
+           #   name: ${_param:stacklight_monitor_node01_hostname}
+           #   provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mon
+           # mon02:
+           #   name: ${_param:stacklight_monitor_node02_hostname}
+           #   provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mon
+           # mon03:
+           #   name: ${_param:stacklight_monitor_node03_hostname}
+           #   provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mon
+           # mtr01:
+           #   name: ${_param:stacklight_telemetry_node01_hostname}
+           #   provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mon
+           # mtr02:
+           #   name: ${_param:stacklight_telemetry_node02_hostname}
+           #   provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mtr
+           # mtr03:
+           #   name: ${_param:stacklight_telemetry_node03_hostname}
+           #   provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.mtr
+           # log01:
+           #   name: ${_param:stacklight_log_node01_hostname}
+           #   provider: ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.log
+           # log02:
+           #   name: ${_param:stacklight_log_node02_hostname}
+           #   provider: ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.log
+           # log03:
+           #   name: ${_param:stacklight_log_node03_hostname}
+           #   provider: ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+           #   image: ${_param:salt_control_xenial_image}
+           #   size: stacklight.log
+  virt:
+    nic:
+      default:
+        eth1:
+          bridge: br_mgm
+        eth0:
+          bridge: br_ctl
+      proxy:
+        eth2:
+          bridge: br_mgm
+        eth1:
+          bridge: br_ctl
+        eth0:
+          bridge: br_storage
+      control:
+        eth2:
+          bridge: br_mgm
+        eth1:
+          bridge: br_ctl
+        eth0:
+          bridge: br_storage
+      ceph:
+        eth2:
+          bridge: br_mgm
+        eth1:
+          bridge: br_ctl
+        eth0:
+          bridge: br_storage
+      gateway:
+        eth3:
+          bridge: br_mgm
+        eth2:
+          bridge: br_ctl
+        eth1:
+          bridge: br_tenant
+        eth0:
+          bridge: br_public
+
+
+  linux:
+    network:
+      bridge: linux
+      interface:
+        ten1:
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:deploy_nic}
+        ten3:
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:control_nic}
+        ten4:
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:storage_nic}
+        ten5:
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:tenant_nic}
+        ten2:
+          enabled: true
+          type: eth
+          proto: manual
+          name: ${_param:public_nic}
+        br_mgm:
+          enabled: true
+          proto: static
+          type: bridge
+          address: ${_param:deploy_address}
+          netmask: ${_param:deploy_network_netmask}
+          gateway: ${_param:deploy_network_gateway}
+          name_servers:
+          - ${_param:dns_server01}
+          - ${_param:dns_server02}
+          use_interfaces:
+          - ${_param:deploy_nic}
+        br_ctl:
+          enabled: true
+          type: bridge
+          proto: static
+          address: ${_param:single_address}
+          netmask: ${_param:control_network_netmask}
+          use_interfaces:
+          - ${_param:control_nic}
+        br_storage:
+          enabled: true
+          type: bridge
+          proto: manual
+          use_interfaces:
+          - ${_param:storage_nic}
+        br_tenant:
+          enabled: true
+          type: bridge
+          proto: manual
+          use_interfaces:
+          - ${_param:tenant_nic}
+        br_public:
+          enabled: true
+          type: bridge
+          proto: manual
+          use_interfaces:
+          - ${_param:public_nic}

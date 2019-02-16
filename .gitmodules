@@ -1,0 +1,4 @@
+[submodule "classes/system"]
+	path = classes/system
+	url = https://github.com/Mirantis/reclass-system-salt-model
+	branch = release/2018.11.0

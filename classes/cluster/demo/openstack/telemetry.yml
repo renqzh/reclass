@@ -1,0 +1,89 @@
+classes:
+- system.linux.system.repo_local.mcp.extra
+- system.linux.system.repo_local.mcp.apt_mirantis.openstack
+- system.linux.system.repo_local.mcp.apt_mirantis.ubuntu
+- system.linux.system.repo_local.mcp.apt_mirantis.saltstack_2016_3
+- system.linux.system.repo_local.mcp.apt_mirantis.glusterfs
+- system.glusterfs.client.cluster
+- system.glusterfs.client.volume.gnocchi
+- system.keepalived.cluster.instance.openstack_telemetry_vip
+- system.memcached.server.single
+- system.apache.server.single
+- system.apache.server.site.aodh
+- system.apache.server.site.gnocchi
+- system.apache.server.site.panko
+- service.redis.server.single
+- system.gnocchi.common.cluster
+- system.gnocchi.server.cluster
+- system.gnocchi.common.storage.incoming.redis
+- system.gnocchi.common.storage.file
+- system.gnocchi.common.coordination.redis
+- system.ceilometer.server.telemetry.cluster
+- system.ceilometer.server.coordination.redis
+- system.aodh.server.cluster
+- system.aodh.server.coordination.redis
+- system.panko.server.cluster
+- system.ceilometer.server.backend.gnocchi
+- cluster.demo.infra
+- cluster.demo.openstack.networking.virtual
+parameters:
+  _param:
+    cluster_vip_address: ${_param:openstack_telemetry_address}
+    keepalived_vip_interface: ens3
+    keepalived_vip_address: ${_param:cluster_vip_address}
+    keepalived_vip_password: ${_param:tenant_telemetry_keepalived_vip_password}
+    cluster_local_address: ${_param:single_address}
+    cluster_node01_hostname: ${_param:openstack_telemetry_node01_hostname}
+    cluster_node01_address: ${_param:openstack_telemetry_node01_address}
+    cluster_node02_hostname: ${_param:openstack_telemetry_node02_hostname}
+    cluster_node02_address: ${_param:openstack_telemetry_node02_address}
+    cluster_node03_hostname: ${_param:openstack_telemetry_node03_hostname}
+    cluster_node03_address: ${_param:openstack_telemetry_node03_address}
+    redis_sentinel_node01_address: ${_param:openstack_telemetry_node01_address}
+    redis_sentinel_node02_address: ${_param:openstack_telemetry_node02_address}
+    redis_sentinel_node03_address: ${_param:openstack_telemetry_node03_address}
+    openstack_telemetry_redis_url: redis://${_param:redis_sentinel_node01_address}:26379?sentinel=master_1&sentinel_fallback=${_param:redis_sentinel_node02_address}:26379&sentinel_fallback=${_param:redis_sentinel_node03_address}:26379
+    gnocchi_coordination_url: ${_param:openstack_telemetry_redis_url}
+    gnocchi_glusterfs_service_host: ${_param:glusterfs_service_host}
+    gnocchi_storage_incoming_redis_url: ${_param:openstack_telemetry_redis_url}
+  redis:
+    server:
+      version: 3.0
+      bind:
+        address: ${_param:single_address}
+    cluster:
+      enabled: True
+      mode: sentinel
+      role: ${_param:redis_cluster_role}
+      quorum: 2
+      master:
+        host: ${_param:cluster_node01_address}
+        port: 6379
+      sentinel:
+        address: ${_param:single_address}
+  apache:
+    server:
+      modules:
+        - wsgi
+  gnocchi:
+    common:
+      database:
+        host: ${_param:openstack_database_address}
+    server:
+      pkgs:
+      # TODO: move python-memcache installation to formula
+      - gnocchi-api
+      - gnocchi-metricd
+      - python-memcache
+  aodh:
+    server:
+      coordination_backend:
+        url: ${_param:openstack_telemetry_redis_url}
+      identity:
+        host: ${_param:openstack_control_address}
+  ceilometer:
+    server:
+      coordination_backend:
+        url: ${_param:openstack_telemetry_redis_url}
+      identity:
+        host: ${_param:openstack_control_address}

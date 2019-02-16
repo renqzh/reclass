@@ -1,0 +1,131 @@
+parameters:
+  reclass:
+    storage:
+      data_source:
+        engine: local
+      node:
+        infra_kvm_node01:
+          classes:
+          - cluster.demo.infra.glusterfs
+          params:
+            keepalived_vip_priority: 100
+            linux_system_codename: xenial
+        infra_kvm_node02:
+          classes:
+          - cluster.demo.infra.glusterfs
+          params:
+            keepalived_vip_priority: 101
+            linux_system_codename: xenial
+        infra_kvm_node03:
+          classes:
+          - cluster.${_param:cluster_name}.infra.backup.server
+          - cluster.demo.infra.glusterfs
+          params:
+            keepalived_vip_priority: 102
+            linux_system_codename: xenial
+        openstack_control_node01:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_control_node01_deploy_address}
+          classes:
+          - cluster.${_param:cluster_name}.openstack.control_init
+        openstack_control_node02:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_control_node02_deploy_address}
+        openstack_control_node03:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_control_node03_deploy_address}
+        openstack_database_node01:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_database_node01_deploy_address}
+          classes:
+          - cluster.${_param:cluster_name}.openstack.database_init
+        openstack_database_node02:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_database_node02_deploy_address}
+        openstack_database_node03:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_database_node03_deploy_address}
+        openstack_message_queue_node01:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_message_queue_node01_deploy_address}
+        openstack_message_queue_node02:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_message_queue_node02_deploy_address}
+        openstack_message_queue_node03:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_message_queue_node03_deploy_address}
+        openstack_proxy_node01:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_proxy_node01_deploy_address}
+        openstack_proxy_node02:
+          params:
+            linux_system_codename: xenial
+            deploy_address: ${_param:openstack_proxy_node02_deploy_address}
+
+
+ #         params:
+ #           deploy_address: ${_param:openstack_upgrade_node01_deploy_address}
+        openstack_gateway_node01:
+          params:
+            deploy_address: ${_param:openstack_gateway_node01_deploy_address}
+        openstack_gateway_node02:
+          params:
+            deploy_address: ${_param:openstack_gateway_node02_deploy_address}
+        openstack_gateway_node03:
+          params:
+            deploy_address: ${_param:openstack_gateway_node03_deploy_address}
+
+        aptly_server_node01:
+          name: ${_param:aptly_server_hostname}01
+          domain: ${_param:cluster_domain}
+          classes:
+          - cluster.${_param:cluster_name}.infra
+          params:
+            salt_master_host: ${_param:reclass_config_master}
+            linux_system_codename: xenial
+            single_address: ${_param:aptly_server_control_address}
+            deploy_address: ${_param:aptly_server_deploy_address}
+
+        cicd_control_node01:
+          params:
+            deploy_address: ${_param:cicd_control_node01_deploy_address}
+        cicd_control_node02:
+          params:
+            deploy_address: ${_param:cicd_control_node02_deploy_address}
+        cicd_control_node03:
+          params:
+            deploy_address: ${_param:cicd_control_node03_deploy_address}
+        openstack_compute_rack01:
+          name: ${_param:openstack_compute_rack01_hostname}<<count>>
+          domain: ${_param:cluster_domain}
+          classes:
+          - cluster.${_param:cluster_name}.openstack.compute
+          repeat:
+            count: 2
+            ip_ranges:
+              single_address: 192.168.200.60-192.168.200.80
+              deploy_address: 192.168.100.60-192.168.100.80
+              tenant_address: 10.10.1.60-10.10.2.80
+            start: 1
+            digits: 3
+            params:
+              single_address:
+                value: <<single_address>>
+              deploy_address:
+                value: <<deploy_address>>
+              tenant_address:
+                value: <<tenant_address>>
+          params:
+            salt_master_host: ${_param:reclass_config_master}
+            linux_system_codename: xenial
+

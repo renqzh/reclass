@@ -1,0 +1,20 @@
+classes:
+- system.rabbitmq.server.cluster
+- system.rabbitmq.server.vhost.openstack
+- system.rabbitmq.server.vhost.openstack.rpc_ha
+- system.rabbitmq.server.vhost.openstack.ha_for_all_queues
+- cluster.demo.infra
+- cluster.demo.openstack.networking.virtual
+parameters:
+  _param:
+    keepalived_vip_interface: ens3
+    keepalived_vip_virtual_router_id: 90
+    cluster_vip_address: ${_param:openstack_message_queue_address}
+    cluster_local_address: ${_param:single_address}
+    cluster_node01_hostname: ${_param:openstack_message_queue_node01_hostname}
+    cluster_node01_address: ${_param:openstack_message_queue_node01_address}
+    cluster_node02_hostname: ${_param:openstack_message_queue_node02_hostname}
+    cluster_node02_address: ${_param:openstack_message_queue_node02_address}
+    cluster_node03_hostname: ${_param:openstack_message_queue_node03_hostname}
+    cluster_node03_address: ${_param:openstack_message_queue_node03_address}
+

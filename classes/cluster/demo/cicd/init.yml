@@ -1,0 +1,105 @@
+parameters:
+  _param:
+    cicd_control_address: 192.168.100.50
+    cicd_control_node01_address: 192.168.100.51
+    cicd_control_node02_address: 192.168.100.52
+    cicd_control_node03_address: 192.168.100.53
+    cicd_control_node01_deploy_address: 192.168.200.51
+    cicd_control_node02_deploy_address: 192.168.200.52
+    cicd_control_node03_deploy_address: 192.168.200.53
+    cicd_control_hostname: cid
+    cicd_control_node01_hostname: cid01
+    cicd_control_node02_hostname: cid02
+    cicd_control_node03_hostname: cid03
+    git_pipeline_library_upstream: http://${_param:aptly_server_hostname}:8088/pipeline-library
+    git_mk_pipelines_upstream: http://${_param:aptly_server_hostname}:8088/Mirantis/mk-pipelines
+    glusterfs_service_host: ${_param:infra_kvm_address}
+    docker_image_registry: ${_param:aptly_server_hostname}:5000/registry:${_param:apt_mk_version}
+    docker_image_compose: ${_param:aptly_server_hostname}:5000/compose:${_param:apt_mk_version}
+    docker_image_visualizer: ${_param:aptly_server_hostname}:5000/visualizer:${_param:apt_mk_version}
+    docker_image_gerrit: ${_param:aptly_server_hostname}:5000/gerrit:${_param:apt_mk_version}
+    docker_image_mysql: ${_param:aptly_server_hostname}:5000/mysql:${_param:apt_mk_version}
+    docker_image_jenkins: ${_param:aptly_server_hostname}:5000/jenkins:${_param:apt_mk_version}
+    docker_image_jenkins_slave: ${_param:aptly_server_hostname}:5000/jnlp-slave:${_param:apt_mk_version}
+    docker_image_openldap: ${_param:aptly_server_hostname}:5000/openldap:${_param:apt_mk_version}
+    docker_image_phpldapadmin: ${_param:aptly_server_hostname}:5000/phpldapadmin:${_param:apt_mk_version}
+    aptly_publisher_image: ${_param:aptly_server_hostname}:5000/aptly-publisher:${_param:apt_mk_version}
+    docker_image_aptly:
+      base: ${_param:aptly_server_hostname}:5000/aptly
+      api: ${_param:aptly_server_hostname}:5000/aptly-api
+      public: ${_param:aptly_server_hostname}:5000/aptly-public
+    # OpenLDAP
+    openldap_organisation: "${_param:cluster_name}"
+    openldap_dn: "dc=deploy-name,dc=local"
+    openldap_domain: "deploy-name.local"
+    openldap_admin_password: ${_param:openldap_admin_password_generated}
+    openldap_config_password: ${_param:openldap_config_password_generated}
+    openldap_readonly_password: ${_param:openldap_readonly_password_generated}
+    # Jenkins
+    jenkins_admin_password: ${_param:openldap_admin_password}
+    jenkins_security_ldap_server: ${_param:cicd_control_address}
+    jenkins_security_ldap_root_dn: ${_param:openldap_dn}
+    jenkins_security_ldap_manager_dn: "cn=admin,${_param:openldap_dn}"
+    jenkins_security_ldap_manager_password: ${_param:openldap_admin_password}
+    # Gerrit
+    gerrit_admin_password: ${_param:openldap_admin_password}
+
+    # Aptly
+    aptly_gpg_keypair_id: none
+    aptly_gpg_passphrase: none
+    aptly_server_secure: false
+    aptly_gpg_private_key: none
+    aptly_gpg_public_key: |
+      -----BEGIN PGP PUBLIC KEY BLOCK-----
+      Version: GnuPG v1
+
+      mQENBFnU98YBCACdTxOkxAJJQaQ4B9sEsh9s4MMOMxPSCwvzgGbk6HECDBhz2auF
+      FfVydNbjLfoih8qdaLSmBQg8+FtdYJHEG1lekeiUETOxJnkhUFXq85KGNj9BbGBr
+      m3/6Jo58pdMNdUMurAs807STvH3iTAhYymggX1u9GyjKbv24p2KMGuK1gC3W04NG
+      qOQX3iwjmBWq87fX7tNLafptCq5A9TAv4Dvt1XZgGCiLI+EcPyfgNB1W/+EOOkFu
+      jFdM43nm0YE3Bf4uuVR/u0REprYJfChdS6qYYgI3n2LuPyi9WMVVee+1RZmTwFcB
+      cS53h+gq1GHOhj+YOwm3+ctmIoTNi26siutdABEBAAG0Kk1pcmFudGlzIE9mZmxp
+      bmUgQXB0bHkgPGluZm9AbWlyYW50aXMuY29tPokBOAQTAQIAIgUCWdT3xgIbAwYL
+      CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQpIXB3agnLgS9wQf7B2LiR4wQh7Vq
+      Vwx1dKrhj0AXF7jSYfYJ/vtV6mXb0AxAxC3BVoW+KLPB+W9lHCXBRYXf1pJZIYcx
+      v0rTGeqzpcxVmMIT1E4OAmZp8pFlBsFNTERG2z01kdnd3oddF3GSiP1cTg2+c9hJ
+      UGJR0tAbPXDm0dXhuDD428IuSx5o4bdNdCshPYRe/P3CGG+KrySLL0/06UU2I5Mx
+      f4pctRouWfrQDA6sIS+P58NKwIpXdWj1pPogJzVUJqHHyAUM8Ri+AZoXtKjqXAqN
+      QNCd/xPaL9dtGxKTMDDKHvqyF5MpU3eYcEFIi79nunfC6Iaw+Izo+hYpiBlb2s6Q
+      kCgR2y/f17kBDQRZ1PfGAQgA1NqQorh2cvogoU4DbRwnQKZDCCt4WnbvcJf8WZw7
+      sINbqJm3pd/UjVwcPG0GFe9w7/eEdKv6N/fVMJYo/Dj34j2waN46sIBBaXi8pPuC
+      rs/fV+KFGmdXNrOED8LeJ835+6eAm3W/930P1o/Rncfi7ANQr4nuSkzCoXhwo9n8
+      RX70L1pYtGw1v3qMaDBKHGpZ0ZqSewSlQYclWG5EKg6ecR0wnLK9W62b5uExbexh
+      7d+W22NTZ9j7SVfwHG4IleZ03B+ak0NqlKpdEA9+8QLdrQsqFN8qDHqJ46ag+5xt
+      pAPmw1S2va7Gkr0BMxzdxwA5d4ZauevaEKTi5NLGdNZuHQARAQABiQEfBBgBAgAJ
+      BQJZ1PfGAhsMAAoJEKSFwd2oJy4E5R4H/3XjYvsalh2g4iYEOjZ1Ld55AA+NDlnp
+      eXJfEOlhxdnAvkTc1CfKdT3qaN5hG0m7sVowaeVbf4cDNwIQy+R75V73h2DQpno3
+      746DDC0C2jRzDBwKrUU9Y/du3REcq4kMCnhtVBMSX6rbJoxSFdCzLu/XJd9oeXbb
+      kObIeoe9FWIrswFB4NUhTHLn1bk5p8zsVbsRm3jl6ofoQmFKFoK6FauuNeB+Fc/1
+      UdMpUb1Y9dpE/akgRm/79NRHKA4plQ2X/CGZu+KIw4XVn/0ilU8FbsX+KXcp8ui0
+      XRqg8z44wtlroFTrnR+DgqplsellsrM+xGtZb9VrjFLeP89jzhrBWgE=
+      =GLje
+      -----END PGP PUBLIC KEY BLOCK-----
+  linux:
+    network:
+      host:
+        ci:
+          address: ${_param:cicd_control_address}
+          names:
+          - ${_param:cicd_control_hostname}
+          - ${_param:cicd_control_hostname}.${_param:cluster_domain}
+        ci01:
+          address: ${_param:cicd_control_node01_address}
+          names:
+          - ${_param:cicd_control_node01_hostname}
+          - ${_param:cicd_control_node01_hostname}.${_param:cluster_domain}
+        ci02:
+          address: ${_param:cicd_control_node02_address}
+          names:
+          - ${_param:cicd_control_node02_hostname}
+          - ${_param:cicd_control_node02_hostname}.${_param:cluster_domain}
+        ci03:
+          address: ${_param:cicd_control_node03_address}
+          names:
+          - ${_param:cicd_control_node03_hostname}
+          - ${_param:cicd_control_node03_hostname}.${_param:cluster_domain}

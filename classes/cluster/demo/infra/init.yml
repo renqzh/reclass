@@ -1,0 +1,169 @@
+classes:
+- system.defaults
+- system.linux.system.single
+- system.linux.system.single.debian
+- system.linux.network.dynamic_hosts
+- system.salt.minion.single
+- system.rsyslog.client.single
+- cluster.demo.openstack
+- system.linux.system.repo.mcp.apt_mirantis.fluentd
+- system.fluentd
+- system.fluentd.label.default_metric
+- system.fluentd.label.default_metric.prometheus
+- system.fluentd.label.default_output.elasticsearch
+- system.fluentd.label.default_output.drop_event
+
+- system.linux.system.repo.mcp.apt_mirantis.openstack
+- system.telegraf.agent
+- system.prometheus.collector
+- service.grafana.collector
+
+- cluster.demo.cicd
+#- cluster.inspurcloud-gz.infra.proxy
+- cluster.demo.infra.apt_repos
+- cluster.demo.infra.secrets
+#- cluster.inspurcloud-gz.infra.proxy
+
+parameters:
+  _param:
+    # Don't set it "false" before you configure sudo policies and enable power users.
+    linux_system_user_sudo: true
+    mcp_version: 2018.11.0
+    apt_mk_version: 2018.11.0
+    # TODO: Revert openstack repo part after refactoring here: https://mirantis.jira.com/browse/PROD-17500
+    openstack_version: queens
+    linux_system_repo_url: http://${_param:local_repo_url}/${_param:apt_mk_version}/
+    jenkins_pipelines_branch: '${_param:apt_mk_version}' 
+    salt_control_trusty_image: http://${_param:aptly_server_hostname}:${_param:aptly_server_http_static_http_port}/images//ubuntu-14-04-x64-mcp${_param:apt_mk_version}.qcow2
+    salt_control_xenial_image: http://${_param:aptly_server_hostname}:${_param:aptly_server_http_static_http_port}/images//ubuntu-16-04-x64-mcp${_param:apt_mk_version}.qcow2 
+    local_repos: true
+    aptly_server_hostname: apt01
+    aptly_server_deploy_address: 192.168.100.43
+    aptly_server_control_address: 192.168.200.43
+    aptly_server_http_static_http_port: 8078
+    local_repo_url: ${_param:aptly_server_deploy_address}
+    linux_repo_refresh_db: true
+    mcp_docker_registry: "${_param:aptly_server_hostname}:5000"
+    infra_config_hostname: cfg01
+    salt_minion_ca_host: ${_param:infra_config_hostname}.${_param:cluster_domain}
+    # infra service addresses
+    infra_config_address: 192.168.200.42
+    infra_config_deploy_address: 192.168.100.42
+
+    cluster_domain: demo.local
+    cluster_name: demo
+    cluster_public_host: ${_param:openstack_proxy_address}
+    control_network_netmask: 255.255.255.0
+    tenant_network_netmask: 255.255.255.0
+    control_network_gateway: 192.168.200.1
+
+    dns_server01: 114.114.114.114
+    dns_server02: 8.8.8.8
+    deploy_network_netmask: 255.255.255.0
+    deploy_network_gateway: 192.168.100.1
+
+
+    # MaaS parameters
+    infra_maas_node01_deploy_address: ${_param:infra_config_deploy_address}
+    infra_maas_node01_hostname: ${_param:infra_config_hostname}
+    infra_kvm_address: 192.168.200.44
+    infra_kvm_node01_address: 192.168.200.45
+    infra_kvm_node02_address: 192.168.200.46
+    infra_kvm_node03_address: 192.168.200.47
+    infra_kvm_node01_deploy_address: 192.168.100.45
+    infra_kvm_node02_deploy_address: 192.168.100.46
+    infra_kvm_node03_deploy_address: 192.168.100.47
+    infra_kvm_node01_hostname: kvm01
+    infra_kvm_node02_hostname: kvm02
+    infra_kvm_node03_hostname: kvm03
+
+
+    glusterfs_node01_address: ${_param:infra_kvm_node01_address}
+    glusterfs_node02_address: ${_param:infra_kvm_node02_address}
+    glusterfs_node03_address: ${_param:infra_kvm_node03_address}
+    linux_deploy_interface:
+      enabled: true
+      type: eth
+      proto: static
+      address: ${_param:deploy_address}
+      netmask: ${_param:deploy_network_netmask}
+      gateway: ${_param:deploy_network_gateway}
+      ipflush_onchange: true
+      restart_on_ipflush: true
+      name_servers:
+        - ${_param:dns_server01}
+        - ${_param:dns_server02}
+      mesh: deploy
+    linux_single_interface:
+      enabled: true
+      type: eth
+      proto: static
+      address: ${_param:single_address}
+      netmask: ${_param:control_network_netmask}
+      name_servers:
+        - ${_param:dns_server01}
+        - ${_param:dns_server02}
+      mesh: control
+
+  salt:
+    minion:
+      trusted_ca_minions:
+        - ${_param:salt_minion_ca_host}
+  linux:
+    network:
+      dhclient:
+        enabled: false
+      host:
+        hostname:
+          address: ${_param:single_address}
+          names:
+          - ${linux:network:hostname}
+          - ${linux:network:fqdn}
+        cfg01:
+          address: ${_param:infra_config_address}
+          names:
+          - ${_param:infra_config_hostname}
+          - ${_param:infra_config_hostname}.${_param:cluster_domain}
+        apt01:
+          address: ${_param:aptly_server_deploy_address}
+          names:
+          - ${_param:aptly_server_hostname}
+          - ${_param:aptly_server_hostname}.${_param:cluster_domain}
+        kvm01:
+          address: ${_param:infra_kvm_node01_address}
+          names:
+          - ${_param:infra_kvm_node01_hostname}
+          - ${_param:infra_kvm_node01_hostname}.${_param:cluster_domain}
+        kvm02:
+          address: ${_param:infra_kvm_node02_address}
+          names:
+          - ${_param:infra_kvm_node02_hostname}
+          - ${_param:infra_kvm_node02_hostname}.${_param:cluster_domain}
+        kvm03:
+          address: ${_param:infra_kvm_node03_address}
+          names:
+          - ${_param:infra_kvm_node03_hostname}
+          - ${_param:infra_kvm_node03_hostname}.${_param:cluster_domain}
+
+    system:
+      apt:
+        config:
+          nosrvrecords:
+            'Acquire::EnableSrvRecords': 'false'
+      local_repos: ${_param:local_repos}
+      purge_repos: True
+      name: ${_param:infra_config_hostname}
+      domain: ${_param:cluster_domain}
+      service:
+        apt-daily.timer:
+          status: dead
+          enabled: false
+        systemd-timesyncd:
+          status: dead
+          enabled: false
+      package:
+        python-msgpack:
+          version: latest
+        python-tornado:
+          version: latest
+

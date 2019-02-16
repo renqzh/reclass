@@ -1,0 +1,41 @@
+classes:
+- system.xtrabackup.client.single
+parameters:
+  _param:
+    xtrabackup_client_throttle: 0
+    xtrabackup_remote_server: ${_param:infra_kvm_node03_address}
+    root_private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpAIBAAKCAQEA53wPB1WWfVgXfIR1c6cc8Jcvh/BZeh32Ru+2cenp6B///+Gc
+      wx8v7YEixO1tFjDWyPB/OkvqGQoJ7Z0deOpgBPL0CEWFMeM5a6Wk+ka41KyRaJT+
+      jqJngkojTdugRYODK9DdJ5VFl59A9xnVx95pXwFgS/B0hYImKjw55vEfDKv1tfeV
+      Rhu2/kVKY2lHRuoWCmn6hFJElmycEUnFPNEPsP2u+zaO38fqyuCBUlDh5XAvhwbh
+      CX/hTVMAyRO7OUphEm4z/tgNBoSp7Lream+BwKUEE6LRLtOU11XyNH3LRY5nsh+M
+      tZLccVilbFSOTNjHKfMKkd/ZW4Vt8P2dN2fR3QIDAQABAoIBAQCmYIRswRdo/+fh
+      l1LTzUj/o6qGCjpFi0N3uNNpDLcSH+3f/Eiv9bp8+lQDNqMxT+kQg8ruG6ImXRDF
+      uCd2wP5CkFzVlSImuSqMNIJfYHV4ZpAcmvpbil7bRm4Zh8GqNNwSogxSZveeAtiu
+      weLlxPX3UwXjjvAxBVppAOCdHLE0aQX82kH8tSfa/QNUosMQ8ll1jexQXeQiU+PM
+      NhEGRe2jlFCZq9CbcL5TlfiwME9Xju+CnqokS6dcryZm6vgq48sdKV3fMx63OiON
+      rA8jik/vQz4Zpp7+dLAdlHrsJGt2uJum4BKiejvlM+OKe/31+vf0UAuqhhdReoc5
+      HIEvygABAoGBAP0x71jl6NQyXvBIJG5vxMgMiYj8jpD4cnz5aLltLrPVoywtWzGS
+      eBpTSohX4rRLo0EHif8/g4t0As4VHQfbmZP4jEHqXvZROiaPtNZmxdDkEtoQs5gJ
+      1ne4YNDnFVDKgs/uO+Vi15QgsjQrEG2IQe0hIzQcuLQH9gr43VA03QM1AoGBAOoM
+      jXWka7sOe2eTaORirncqiEJowKI5f6dEQqBaSsW33VuZAb5OWRDKmx+Nr5JtdkjW
+      Xgevmzp/zLP5bzo0JbmeHn6OHqpN2gUPX50lnIqiukPw/upVk9EyECCadIYowyUo
+      yDXrAmv4Y/XJGEGKMWJ5HcA57QyArjV4oK38kYEJAoGATlaF3HZ9/DF9iFB53SV9
+      t/uRDi4+GgKUwbAVQ9HRMlj2PHPoFEViHZsJo3e1r9z7LOKdQrkvBRWmzIZhzg2W
+      zd6H3tkZ+pIVMNsjs3Zm3APFBW1Hc9IPZklIwznMMYwGvzjRlV5onu8i09tDIPCY
+      nTq0fqooR6Ny7+Ah8W/5tcUCgYAG3v94KK+Q+kfdLpKxwcPlc7Y0XObq3E1HF9Xs
+      5zmyvEcfXUqTz7EFsS0ErCAvaE9ErCZui1U/TmkwD26Ygtdor5+tj3aPAWIZK+5e
+      qrAB0e0t+XFCZ+jDB3k5u88X8TJpcN0P2CpmCRDGMnUn12rDvVKGRi0TZOO4ZiYx
+      dWzAIQKBgQDUsJHM6BvgGk2U2jMBOpm5djc1eeceJi2zE31E0Df1gR45EZ8iu63y
+      94BvExIB3Cvdgqv2LQketQeq1k3UGO4kYo+lnAb8y3oc8b2JSw1l5qpeMZWRbFPt
+      Ydakv5or4dEP085podbyLzFX2qQYKwZfsRJo/SfnPIaw2MyrZACJxg==
+      -----END RSA PRIVATE KEY-----
+  xtrabackup:
+    server:
+      enabled: false
+      backup_dir: /srv/volumes/backup/xtrabackup
+  mysql:
+    client:
+      backup_dir: /srv/volumes/backup/backupninja
