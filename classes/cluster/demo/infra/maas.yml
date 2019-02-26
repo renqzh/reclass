@@ -51,7 +51,7 @@ parameters:
           ipranges:
             1:
               end: 192.168.100.250
-              start: 192.168.100.41
+              start: 192.168.100.150
               type: dynamic
               subnet: ${maas:region:subnets:deploy_network:name}
       fabrics:
@@ -71,5 +71,5 @@ parameters:
         host: ${_param:deploy_address}
         port: ${_param:maas_region_port}
         saltstack_repo_key: ${_param:aptly_gpg_public_key}
-        saltstack_repo_trusty: "http://${_param:local_repo_url}/ubuntu-trusty/salt/${_param:salt_version} ${_param:apt_mk_version} main"
-        saltstack_repo_xenial: "http://${_param:local_repo_url}/ubuntu-xenial/salt/${_param:salt_version} ${_param:apt_mk_version} main"
+        saltstack_repo_trusty: "deb [arch=amd64] ${_param:linux_system_repo_mcp_saltstack_url}/trusty/ trusty main"
+        saltstack_repo_xenial: "deb [arch=amd64] ${_param:linux_system_repo_mcp_saltstack_url}/xenial/ xenial main"
